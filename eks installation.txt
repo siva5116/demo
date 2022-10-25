@@ -1,0 +1,76 @@
+Pre-requisites:--->
+-------------
+
+An EC2 Instance
+
+
+AWS EKS Setup:---->
+-------------
+
+Note:--> Be in root user.
+
+1) Setup  kubetcl
+  a. Download kubectlversion 1.20 or higher
+  b. Grant execution permissions to kubectl executable
+  c. Move kubectl onto /usr/local/bin
+  d. Test that your kubectl installation was successful.
+
+ kubectl version | grep Client | cut -d : -f 5
+
+ curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.23.7/2022-06-29/bin/linux/amd64/kubectl
+
+ chmod +x ./kubectl
+ 
+ mv ./kubectl  /usr/local/bin
+
+ kubectl version --short --client
+
+2) Setup eksctl
+ a.Download and extract the latest release
+ b.Move the extracted binary to /usr/local/bin
+ c.Test that your eksctl installation was successful
+
+
+ curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+ 
+ sudo mv /tmp/eksctl /usr/local/bin
+
+ eksctl version
+
+
+3) Create an IAM Role abd attach it to EC2 Instance
+ 
+Note:- create IAM user wuth programatic access if your bootstrip system is outside of AWS
+
+IAM user should have access to
+-> IAM fullaccess
+-> EC2  "    "
+-> VPC  "    "
+-> CloudFormation
+
+4) Create your cluster and nodes
+
+  eksctl create cluster --name cluster-name \
+  --region region-name \
+  --node-type instance-type \
+  --nodes-min 2 \
+  --nodes-max 2\
+  --zones <AZ-1>,<AZ-2>    (if required)
+
+
+ example:--->
+
+  eksctl create cluster  --name demo-cluster \
+     --region ap-south-1 \
+  --node-type t2.small  \
+
+
+5) Validate your cluster using by creating by checking nodes and by creating a pod
+
+  kubectl  get nodes
+  kubectl run pod tomcat  --image=tomcat
+
+ kubectl get pods 
+
+
+
